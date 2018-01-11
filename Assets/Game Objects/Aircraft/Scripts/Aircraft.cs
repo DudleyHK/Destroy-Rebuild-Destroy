@@ -5,7 +5,14 @@ using UnityEngine;
 public class Aircraft : MonoBehaviour 
 {
     [SerializeField]
-    private Rigidbody aircraftRigidbody;
+    private float speed = 20f;
+    [SerializeField]
+    private float angularSpeed = 0.1f;
+
+
+
+
+    private new Rigidbody rigidbody;
 
 
 
@@ -14,7 +21,7 @@ public class Aircraft : MonoBehaviour
 
     private void Awake()
     {
-        aircraftRigidbody = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
 
@@ -25,9 +32,18 @@ public class Aircraft : MonoBehaviour
     }
 
 
+
+
     private void Movement()
     {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            rigidbody.velocity += transform.forward * speed * Time.deltaTime;
+        }
 
+        if(Input.GetKeyDown(KeyCode.W))
+        {
+            rigidbody.angularVelocity += transform.right * angularSpeed * Time.deltaTime;
+        }
     }
-
 }
