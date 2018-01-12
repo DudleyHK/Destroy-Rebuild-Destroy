@@ -25,25 +25,68 @@ public class Aircraft : MonoBehaviour
     }
 
 
-
-    private void Update()
+    private void OnEnable()
     {
-        Movement();
+        InputManager.inputAxis += InputAxis;
+        InputManager.inputButton += InputButton;
+    }
+
+
+    private void OnDisable()
+    {
+        InputManager.inputAxis -= InputAxis;
+        InputManager.inputButton -= InputButton;
     }
 
 
 
 
-    private void Movement()
+    private void InputAxis(GameAction gameAction, float value, int ID)
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        // if (myID == ID)
+        // {
+
+        switch(gameAction)
         {
-            rigidbody.velocity += transform.forward * speed * Time.deltaTime;
+            case GameAction.Horizontal:
+                Roll(value);
+                break;
+            case GameAction.Vertical:
+                Pitch(value);
+                break;
+            case GameAction.DriveMeHard:
+                Forward(value);
+                break;
         }
 
-        if(Input.GetKeyDown(KeyCode.W))
-        {
-            rigidbody.angularVelocity += transform.right * angularSpeed * Time.deltaTime;
-        }
+        // }
+    }
+
+
+    private void Pitch(float value)
+    {
+        rigidbody.angularVelocity += transform.right * (-value * angularSpeed) * Time.deltaTime;
+    }
+
+    private void Yaw(float value)
+    {
+        // TODO: Use right/ left bumper.
+    }
+
+    private void Roll(float value)
+    {
+        rigidbody.angularVelocity += transform.forward * (-value * angularSpeed) * Time.deltaTime;
+    }
+
+
+    private void Forward(float value)
+    {
+        rigidbody.velocity += transform.forward * (value * speed) * Time.deltaTime;
+    }
+
+
+    private void InputButton(GameAction gameAction, int ID)
+    {
+
     }
 }
