@@ -7,11 +7,24 @@ public class Aircraft : MonoBehaviour
     [SerializeField]
     private float speed = 20f;
     [SerializeField]
+    private float acceleration = 50f;
+    [SerializeField]
+    private float yawSpeed = 4.5f;
+    [SerializeField]
     private float angularSpeed = 0.1f;
+    [SerializeField]
+    private int ID = 1;
+    [SerializeField]
+    private Camera aircraftCamera;
+    [SerializeField]
+    private GameObject bombPrefab;
+    [SerializeField]
+    private BombCamera bombCamera;
+    [SerializeField]
+    private GameObject lastBomb = null;
+   
 
-
-
-
+    
     private new Rigidbody rigidbody;
 
 
@@ -21,27 +34,29 @@ public class Aircraft : MonoBehaviour
 
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rigidbody  = GetComponent<Rigidbody>();
+        bombCamera = GetComponentInChildren<BombCamera>();
     }
 
 
     private void OnEnable()
     {
-        InputManager.inputAxis += InputAxis;
-        InputManager.inputButton += InputButton;
+        InputManager.InputDetected += HandleInput;
     }
 
 
     private void OnDisable()
     {
-        InputManager.inputAxis -= InputAxis;
-        InputManager.inputButton -= InputButton;
+        InputManager.InputDetected -= HandleInput;
     }
 
 
+    private void Update()
+    {
+        
+    }
 
-
-    private void InputAxis(GameAction gameAction, float value, int ID)
+    private void HandleInput(GameAction gameAction, float value, int ID)
     {
         // if (myID == ID)
         // {
@@ -57,6 +72,18 @@ public class Aircraft : MonoBehaviour
             case GameAction.DriveMeHard:
                 Forward(value);
                 break;
+            case GameAction.Action:
+                DropBomb(value);
+                break;
+            case GameAction.AntiAction:
+                BombCamera(value);
+                break;
+            case GameAction.LeftBumper:
+                Yaw(value);
+                break;
+            case GameAction.RightBumper:
+                Yaw(value);
+                break;
         }
 
         // }
@@ -66,27 +93,62 @@ public class Aircraft : MonoBehaviour
     private void Pitch(float value)
     {
         rigidbody.angularVelocity += transform.right * (-value * angularSpeed) * Time.deltaTime;
+        //transform.Rotate(value, 0f, 0f, Space.Self);
     }
 
     private void Yaw(float value)
     {
-        // TODO: Use right/ left bumper.
+        rigidbody.angularVelocity += transform.up * (value * angularSpeed) * Time.deltaTime;
+       // transform.Rotate(0f, value * yawSpeed * Time.deltaTime, 0f, Space.Self);
     }
 
     private void Roll(float value)
     {
         rigidbody.angularVelocity += transform.forward * (-value * angularSpeed) * Time.deltaTime;
+        //transform.Rotate(0f, 0f, -value, Space.Self);
     }
 
 
     private void Forward(float value)
     {
-        rigidbody.velocity += transform.forward * (value * speed) * Time.deltaTime;
+       var forwardSpeed = value * speed;
+       if(forwardSpeed < 2f) forwardSpeed = 2f;
+       if(forwardSpeed > 100f) forwardSpeed = 100f;
+
+       // forwardSpeed -= transform.forward.y * 10f * Time.deltaTime;
+       //rigidbody.AddForce(transform.forward * forwardSpeed * Time.deltaTime, ForceMode.VelocityChange);
+        rigidbody.velocity += transform.forward * forwardSpeed * Time.deltaTime;
+
+        //transform.position += transform.forward * speed * Time.deltaTime;
+        //
+        //// Adjust speed based on the way the plane is facing.
+
     }
 
 
-    private void InputButton(GameAction gameAction, int ID)
-    {
 
+    private void DropBomb(float value)
+    {
+        if(value > 0)
+        {
+            lastBomb = Instantiate(bombPrefab, this.transform.position, Quaternion.identity);
+            bombCamera.UpdateTarget(lastBomb);
+        }
+    }
+
+
+    private void BombCamera(float value)
+    {        
+        if(value > 0)
+        {
+            if(bombCamera.Toggle())
+            {
+                aircraftCamera.enabled = false;
+            }
+            else
+            {
+                aircraftCamera.enabled = true;
+            }
+        }
     }
 }
