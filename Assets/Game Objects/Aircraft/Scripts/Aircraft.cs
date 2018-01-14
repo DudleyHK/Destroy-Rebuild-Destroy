@@ -63,25 +63,25 @@ public class Aircraft : MonoBehaviour
 
         switch(gameAction)
         {
-            case GameAction.Horizontal:
+            case GameAction.LS_X_Axis:
                 Roll(value);
                 break;
-            case GameAction.Vertical:
+            case GameAction.LS_Y_Axis:
                 Pitch(value);
                 break;
-            case GameAction.DriveMeHard:
+            case GameAction.RT_Axis:
                 Forward(value);
                 break;
-            case GameAction.Action:
+            case GameAction.A_Down:
                 DropBomb(value);
                 break;
-            case GameAction.AntiAction:
+            case GameAction.B_Down:
                 BombCamera(value);
                 break;
-            case GameAction.LeftBumper:
+            case GameAction.LB_Held:
                 Yaw(value);
                 break;
-            case GameAction.RightBumper:
+            case GameAction.RB_Held:
                 Yaw(value);
                 break;
         }

@@ -14,7 +14,7 @@ public class DebugManager : MonoBehaviour
     [SerializeField]
     private float timer = 0f;
 
-    private List<GameAction> resetAircraft = new List<GameAction>(new GameAction[] { GameAction.Action, GameAction.AntiAction });
+    private List<GameAction> resetAircraft = new List<GameAction>(new GameAction[] { GameAction.A_Down, GameAction.B_Down });
 
 
     private void OnEnable()
@@ -52,16 +52,16 @@ public class DebugManager : MonoBehaviour
         {
             switch(gameAction)
             {
-                case GameAction.RightBumper:
+                case GameAction.RB_Held:
                     cheatList.Add(gameAction);
                     break;
-                case GameAction.LeftBumper:
+                case GameAction.LB_Held:
                     cheatList.Add(gameAction);
                     break;
-                case GameAction.Action:
+                case GameAction.A_Down:
                     cheatList.Add(gameAction);
                     break;
-                case GameAction.AntiAction:
+                case GameAction.B_Down:
                     cheatList.Add(gameAction);
                     break;
             }

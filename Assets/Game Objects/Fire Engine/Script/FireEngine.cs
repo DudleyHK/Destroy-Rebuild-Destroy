@@ -10,6 +10,11 @@ using UnityEngine;
 public class FireEngine : MonoBehaviour 
 {
 
+    [SerializeField]
+    private float driveSpeed = 150f;
+    [SerializeField]
+    private float turnSpeed = 75f;
+
 
     private void OnEnable()
     {
@@ -28,23 +33,77 @@ public class FireEngine : MonoBehaviour
         // if (myID = ID)
         switch(gameAction)
         {
-            case GameAction.Horizontal:
-                // 
+            case GameAction.LS_X_Axis:
+                Turn(value);
                 break;
-            case GameAction.Vertical:
+            case GameAction.RS_X_Axis:
+                RotateCanonHor(value);
                 break;
-            case GameAction.DriveMeHard:
+            case GameAction.RS_Y_Axis:
+                RotateCanonVert(value);
                 break;
-            case GameAction.Action:
+            case GameAction.RT_Axis:
+                Drive(value);
                 break;
-            case GameAction.AntiAction:
+            case GameAction.A_Down:
+                CannonOne(value);
                 break;
-            case GameAction.None:
+            case GameAction.B_Down:
+                CannonTwo(value);
                 break;
-            default:
+            case GameAction.LT_Axis:
+                Reverse(value);
                 break;
         }
     }
 
+
+    private void Drive(float value)
+    {
+        var speed = driveSpeed * value;
+        transform.position -= transform.forward * speed * Time.deltaTime;
+    }
+
+    private void Reverse(float value)
+    {
+        var speed = driveSpeed * -value;
+        transform.position += transform.forward * speed * Time.deltaTime;
+    }
+
+
+    private void Turn(float value)
+    {
+        var speed = value * turnSpeed * Time.deltaTime;
+        transform.Rotate(0f, speed, 0f);
+    }
+
+
+    private void CannonOne(float value)
+    {
+        Debug.Log("Spray cannon one");
+    }
+
+
+    private void CannonTwo(float value)
+    {
+        Debug.Log("Spray cannon two");
+    }
+
+
+
+
+
+    private void RotateCanonHor(float value)
+    {
+        if(value != 0)
+            Debug.Log("Horizontal rotation of canon currently being shot with");
+    }
+
+
+    private void RotateCanonVert(float value)
+    {
+        if(value != 0)
+            Debug.Log("Vertical rotation of canon currently being shot with");
+    }
 
 }
