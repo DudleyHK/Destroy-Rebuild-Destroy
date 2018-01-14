@@ -14,7 +14,32 @@ public class FireEngine : MonoBehaviour
     private float driveSpeed = 150f;
     [SerializeField]
     private float turnSpeed = 75f;
+    [SerializeField]
+    private float gushSpeed = 100f;
+    [SerializeField]
+    private GameObject rotationBox;
+    [SerializeField]
+    private GameObject hose;
+    [SerializeField]
+    private GameObject waterPrefab;
 
+
+    private void Start()
+    {
+        rotationBox = GameObject.Find("Rotation Box - 1");
+        if(!rotationBox)
+        {
+            Debug.Log("ERROR: Rotation box object not found.");
+            return;
+        }
+        
+        hose = GameObject.Find("Hose - 1");
+        if(!hose)
+        {
+            Debug.Log("ERROR: Child GameObject (hose) not found");
+            return;
+        }
+    }
 
     private void OnEnable()
     {
@@ -33,26 +58,23 @@ public class FireEngine : MonoBehaviour
         // if (myID = ID)
         switch(gameAction)
         {
+            case GameAction.RT_Axis:
+                Drive(value);
+                break;
+            case GameAction.LT_Axis:
+                Reverse(value);
+                break;
             case GameAction.LS_X_Axis:
                 Turn(value);
+                break;
+            case GameAction.A_Held:
+                CannonOne(value);
                 break;
             case GameAction.RS_X_Axis:
                 RotateCanonHor(value);
                 break;
             case GameAction.RS_Y_Axis:
                 RotateCanonVert(value);
-                break;
-            case GameAction.RT_Axis:
-                Drive(value);
-                break;
-            case GameAction.A_Down:
-                CannonOne(value);
-                break;
-            case GameAction.B_Down:
-                CannonTwo(value);
-                break;
-            case GameAction.LT_Axis:
-                Reverse(value);
                 break;
         }
     }
@@ -80,16 +102,14 @@ public class FireEngine : MonoBehaviour
 
     private void CannonOne(float value)
     {
-        Debug.Log("Spray cannon one");
+        var spawnPoint = hose.transform.position + (transform.forward * 10f);
+
+        var clone = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
+        var clone2 = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
+
+        clone.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed;
+        clone2.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed / 2f;
     }
-
-
-    private void CannonTwo(float value)
-    {
-        Debug.Log("Spray cannon two");
-    }
-
-
 
 
 
