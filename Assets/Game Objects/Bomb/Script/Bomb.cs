@@ -40,10 +40,13 @@ public class Bomb : MonoBehaviour
     {
         Debug.Log("Bomb Hit: " + other.gameObject.tag);
         var otherObject = other.gameObject;
-        if(otherObject.tag != this.tag)
+        if(otherObject.tag != "Aircraft")
         {
             Debug.Log("Bomb Hit: " + otherObject.tag);
-            otherObject.GetComponent<Renderer>().material.color = Color.red;
+            if(otherObject.GetComponent<Renderer>() != null)
+            {
+                otherObject.GetComponent<Renderer>().material.color = Color.red;
+            }
             Destroy(this.gameObject);
         }
     }
