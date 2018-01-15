@@ -19,13 +19,13 @@ public class DebugManager : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.InputDetected += LogInput; 
+        InputManager.inputDetected += LogInput; 
     }
 
 
     private void OnDisable()
     {
-        InputManager.InputDetected -= LogInput;
+        InputManager.inputDetected -= LogInput;
     }
 
 

@@ -43,13 +43,13 @@ public class FireEngine : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.InputDetected += HandleInput;
+        InputManager.inputDetected += HandleInput;
     }
 
 
     private void OnDisable()
     {
-        InputManager.InputDetected -= HandleInput;
+        InputManager.inputDetected -= HandleInput;
     }
 
 

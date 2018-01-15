@@ -26,8 +26,8 @@ public enum GameAction
 
 public class InputManager : MonoBehaviour
 {
-    public delegate void InputAxis(GameAction gameAction, float value ,int ID);
-    public static event  InputAxis InputDetected;
+    public delegate void InputDetected(GameAction gameAction, float value ,int ID);
+    public static event  InputDetected inputDetected;
 
 
     private const int MAX_PLAYERS = 4;
@@ -55,19 +55,19 @@ public class InputManager : MonoBehaviour
     private void LeftStick()
     {
         var x = Input.GetAxis("Controller " + gamepadID + " - Horizontal");
-        InputDetected(GameAction.LS_X_Axis, x, gamepadID);
+        inputDetected(GameAction.LS_X_Axis, x, gamepadID);
 
         var y = Input.GetAxis("Controller " + gamepadID + " - Vertical");
-        InputDetected(GameAction.LS_Y_Axis, y, gamepadID);
+        inputDetected(GameAction.LS_Y_Axis, y, gamepadID);
     }
 
     private void RightStick()
     {
         var x = Input.GetAxis("Controller " + gamepadID + " - Second Horizontal");
-        InputDetected(GameAction.RS_X_Axis, x, gamepadID);
+        inputDetected(GameAction.RS_X_Axis, x, gamepadID);
 
         var y = Input.GetAxis("Controller " + gamepadID + " - Second Vertical");
-        InputDetected(GameAction.RS_Y_Axis, y, gamepadID);
+        inputDetected(GameAction.RS_Y_Axis, y, gamepadID);
     }
   
     private void Triggers()
@@ -76,11 +76,11 @@ public class InputManager : MonoBehaviour
        
         if(trigger > 0)
         {
-            InputDetected(GameAction.LT_Axis, trigger, gamepadID);
+            inputDetected(GameAction.LT_Axis, trigger, gamepadID);
         }
         else if (trigger < 0)
         {
-            InputDetected(GameAction.RT_Axis, trigger, gamepadID);
+            inputDetected(GameAction.RT_Axis, trigger, gamepadID);
         }
     }
 
@@ -104,7 +104,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButtonDown("Controller " + gamepadID + " - A");
         if(action)
         {
-            InputDetected(GameAction.A_Down, 1, gamepadID);
+            inputDetected(GameAction.A_Down, 1, gamepadID);
         }
     }
 
@@ -113,7 +113,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButton("Controller " + gamepadID + " - A");
         if(action)
         {
-            InputDetected(GameAction.A_Held, 1, gamepadID);
+            inputDetected(GameAction.A_Held, 1, gamepadID);
         }
     }
 
@@ -122,7 +122,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButtonDown("Controller " + gamepadID + " - B");
         if(action)
         {
-            InputDetected(GameAction.B_Down, 1, gamepadID);
+            inputDetected(GameAction.B_Down, 1, gamepadID);
         }
     }
 
@@ -131,7 +131,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButton("Controller " + gamepadID + " - B");
         if(action)
         {
-            InputDetected(GameAction.B_Held, 1, gamepadID);
+            inputDetected(GameAction.B_Held, 1, gamepadID);
         }
     }
 
@@ -140,7 +140,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButtonDown("Controller " + gamepadID + " - LeftBumper");
         if(action)
         {
-            InputDetected(GameAction.LB_Down, -1, gamepadID);
+            inputDetected(GameAction.LB_Down, -1, gamepadID);
         }
     }
 
@@ -149,7 +149,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButton("Controller " + gamepadID + " - LeftBumper");
         if(action)
         {
-            InputDetected(GameAction.LB_Held, -1, gamepadID);
+            inputDetected(GameAction.LB_Held, -1, gamepadID);
         }
     }
 
@@ -158,7 +158,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButtonDown("Controller " + gamepadID + " - RightBumper");
         if(action)
         {
-            InputDetected(GameAction.RB_Down, 1, gamepadID);
+            inputDetected(GameAction.RB_Down, 1, gamepadID);
         }
     }
 
@@ -167,7 +167,7 @@ public class InputManager : MonoBehaviour
         var action = Input.GetButton("Controller " + gamepadID + " - RightBumper");
         if(action)
         {
-            InputDetected(GameAction.RB_Held, 1, gamepadID);
+            inputDetected(GameAction.RB_Held, 1, gamepadID);
         }
     }
 }

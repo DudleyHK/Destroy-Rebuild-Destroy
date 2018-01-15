@@ -43,7 +43,7 @@ public class BombCamera : MonoBehaviour
         //else
         //    transform.LookAt(new Vector3(transform.position.x, transform.position.y - 10f, transform.position.z));
 
-        transform.LookAt(new Vector3(transform.position.x, transform.position.y - 10f, transform.position.z - cameraZ));
+        transform.LookAt(new Vector3(transform.position.x - cameraX, transform.position.y - 10f, transform.position.z - cameraZ));
     }
 
 

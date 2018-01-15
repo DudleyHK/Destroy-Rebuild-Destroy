@@ -5,6 +5,10 @@ using UnityEngine;
 public class Aircraft : MonoBehaviour 
 {
     [SerializeField]
+    private float minSpeed = 40f;
+    [SerializeField]
+    private float maxSpeed = 200f;
+    [SerializeField]
     private float speed = 20f;
     [SerializeField]
     private float acceleration = 50f;
@@ -41,19 +45,19 @@ public class Aircraft : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.InputDetected += HandleInput;
+        InputManager.inputDetected += HandleInput;
     }
 
 
     private void OnDisable()
     {
-        InputManager.InputDetected -= HandleInput;
+        InputManager.inputDetected -= HandleInput;
     }
 
 
     private void Update()
     {
-        
+        rigidbody.velocity += transform.forward * 20f * Time.deltaTime;
     }
 
     private void HandleInput(GameAction gameAction, float value, int ID)
@@ -93,36 +97,26 @@ public class Aircraft : MonoBehaviour
     private void Pitch(float value)
     {
         rigidbody.angularVelocity += transform.right * (-value * angularSpeed) * Time.deltaTime;
-        //transform.Rotate(value, 0f, 0f, Space.Self);
     }
 
     private void Yaw(float value)
     {
         rigidbody.angularVelocity += transform.up * (value * angularSpeed) * Time.deltaTime;
-       // transform.Rotate(0f, value * yawSpeed * Time.deltaTime, 0f, Space.Self);
     }
 
     private void Roll(float value)
     {
         rigidbody.angularVelocity += transform.forward * (-value * angularSpeed) * Time.deltaTime;
-        //transform.Rotate(0f, 0f, -value, Space.Self);
     }
 
 
     private void Forward(float value)
     {
-       var forwardSpeed = value * speed;
-       if(forwardSpeed < 2f) forwardSpeed = 2f;
-       if(forwardSpeed > 100f) forwardSpeed = 100f;
-
-       // forwardSpeed -= transform.forward.y * 10f * Time.deltaTime;
-       //rigidbody.AddForce(transform.forward * forwardSpeed * Time.deltaTime, ForceMode.VelocityChange);
+       var forwardSpeed = -value * speed;
+       if(forwardSpeed < minSpeed)  forwardSpeed = minSpeed;
+       if(forwardSpeed > maxSpeed)  forwardSpeed = maxSpeed;
+       
         rigidbody.velocity += transform.forward * forwardSpeed * Time.deltaTime;
-
-        //transform.position += transform.forward * speed * Time.deltaTime;
-        //
-        //// Adjust speed based on the way the plane is facing.
-
     }
 
 

@@ -40,7 +40,7 @@ public class Bomb : MonoBehaviour
     {
         Debug.Log("Bomb Hit: " + other.gameObject.tag);
         var otherObject = other.gameObject;
-        if(otherObject.tag != "Aircraft")
+        if(otherObject.tag == "Building")
         {
             Debug.Log("Bomb Hit: " + otherObject.tag);
             if(otherObject.GetComponent<Renderer>() != null)
