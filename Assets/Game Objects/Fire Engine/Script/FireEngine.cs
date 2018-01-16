@@ -14,48 +14,36 @@ public class FireEngine : MonoBehaviour
     private float driveSpeed = 150f;
     [SerializeField]
     private float turnSpeed = 75f;
-    [SerializeField]
-    private float gushSpeed = 100f;
-    [SerializeField]
-    private GameObject rotationBox;
-    [SerializeField]
-    private GameObject hose;
-    [SerializeField]
-    private GameObject waterPrefab;
 
+
+    [SerializeField]
+    private ControllerID controllerID = ControllerID.Unassigned;
+    [SerializeField]
+    private ObjectType objectType = ObjectType.Unassigned;
 
     private void Start()
     {
-        rotationBox = GameObject.Find("Rotation Box - 1");
-        if(!rotationBox)
-        {
-            Debug.Log("ERROR: Rotation box object not found.");
-            return;
-        }
-        
-        hose = GameObject.Find("Hose - 1");
-        if(!hose)
-        {
-            Debug.Log("ERROR: Child GameObject (hose) not found");
-            return;
-        }
+
     }
 
     private void OnEnable()
     {
         InputManager.inputDetected += HandleInput;
+        PlayerManager.playerCreated += InsertPlayer;
     }
 
 
     private void OnDisable()
     {
         InputManager.inputDetected -= HandleInput;
+        PlayerManager.playerCreated -= InsertPlayer;
     }
 
 
-    private void HandleInput(GameAction gameAction, float value, int ID)
+    private void HandleInput(GameAction gameAction, float value, ControllerID ID)
     {
-        // if (myID = ID)
+        if(controllerID != ID) return;
+
         switch(gameAction)
         {
             case GameAction.RT_Axis:
@@ -68,15 +56,19 @@ public class FireEngine : MonoBehaviour
                 Turn(value);
                 break;
             case GameAction.A_Held:
-                CannonOne(value);
                 break;
             case GameAction.RS_X_Axis:
-                RotateCanonHor(value);
                 break;
             case GameAction.RS_Y_Axis:
-                RotateCanonVert(value);
                 break;
         }
+    }
+
+
+    private void InsertPlayer(ControllerID ID, ObjectType objectType)
+    {
+        if(objectType != this.objectType) return;
+        controllerID = ID; 
     }
 
 
@@ -98,32 +90,4 @@ public class FireEngine : MonoBehaviour
         var speed = value * turnSpeed * Time.deltaTime;
         transform.Rotate(0f, speed, 0f);
     }
-
-
-    private void CannonOne(float value)
-    {
-        var spawnPoint = hose.transform.position + (transform.forward * 10f);
-
-        var clone = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
-        var clone2 = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
-
-        clone.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed;
-        clone2.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed / 2f;
-    }
-
-
-
-    private void RotateCanonHor(float value)
-    {
-        if(value != 0)
-            Debug.Log("Horizontal rotation of canon currently being shot with");
-    }
-
-
-    private void RotateCanonVert(float value)
-    {
-        if(value != 0)
-            Debug.Log("Vertical rotation of canon currently being shot with");
-    }
-
 }

@@ -45,7 +45,7 @@ public class DebugManager : MonoBehaviour
 
 
 
-    private void LogInput(GameAction gameAction, float value, int ID)
+    private void LogInput(GameAction gameAction, float value, ControllerID ID)
     {
         // Lock whilst searching.
         if(timer < MAX_TIME)
@@ -88,7 +88,6 @@ public class DebugManager : MonoBehaviour
             if(sequence[i + currMatch] == cheatList[i])
             {
                listIDs.Add(i);
-                Debug.Log(sequence[currMatch]);
                 currMatch++;
             }
             else

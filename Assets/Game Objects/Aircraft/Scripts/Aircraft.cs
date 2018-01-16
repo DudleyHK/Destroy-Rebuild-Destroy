@@ -26,9 +26,13 @@ public class Aircraft : MonoBehaviour
     private BombCamera bombCamera;
     [SerializeField]
     private GameObject lastBomb = null;
-   
+    [SerializeField]
+    private ControllerID controllerID = ControllerID.Unassigned;
+    [SerializeField]
+    private ObjectType objectType = ObjectType.Unassigned;
 
-    
+
+
     private new Rigidbody rigidbody;
 
 
@@ -42,16 +46,23 @@ public class Aircraft : MonoBehaviour
         bombCamera = GetComponentInChildren<BombCamera>();
     }
 
+    private void Start()
+    {
+        // TODO: Parse the tag into the Enum type and set the objectType as that.
+    }
+
 
     private void OnEnable()
     {
         InputManager.inputDetected += HandleInput;
+        PlayerManager.playerCreated += InsertPlayer;
     }
 
 
     private void OnDisable()
     {
         InputManager.inputDetected -= HandleInput;
+        PlayerManager.playerCreated -= InsertPlayer;
     }
 
 
@@ -60,10 +71,9 @@ public class Aircraft : MonoBehaviour
         rigidbody.velocity += transform.forward * 20f * Time.deltaTime;
     }
 
-    private void HandleInput(GameAction gameAction, float value, int ID)
+    private void HandleInput(GameAction gameAction, float value, ControllerID ID)
     {
-        // if (myID == ID)
-        // {
+        if(controllerID != ID) return;
 
         switch(gameAction)
         {
@@ -89,8 +99,14 @@ public class Aircraft : MonoBehaviour
                 Yaw(value);
                 break;
         }
+    }
 
-        // }
+
+    private void InsertPlayer(ControllerID ID, ObjectType objectType)
+    {
+        if(objectType != this.objectType)
+            return;
+        controllerID = ID;
     }
 
 
