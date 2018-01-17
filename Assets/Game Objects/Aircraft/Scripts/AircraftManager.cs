@@ -12,10 +12,16 @@ public class AircraftManager : MonoBehaviour
     [SerializeField]
     private AircraftPhysics aircraftPhysics;
     [SerializeField]
+    private AircraftBombHatch aircraftBombHatch;
+    [SerializeField]
     private ControllerID controllerID = ControllerID.Unassigned;
     [SerializeField]
     private ObjectType objectType = ObjectType.Unassigned;
 
+
+    // TODO: Add fuel to the aircraft
+    // TODO: Add total bomb being carried. 
+    // TODO: Count down number of bombs. 
 
 
 
@@ -25,6 +31,13 @@ public class AircraftManager : MonoBehaviour
         if(!aircraftPhysics)
         {
             Debug.Log("ERROR: AircraftPhysics script is not found");
+            return;
+        }
+
+        aircraftBombHatch = GetComponent<AircraftBombHatch>();
+        if(!aircraftBombHatch)
+        {
+            Debug.Log("ERROR: AircraftBombHatch script is not found");
             return;
         }
     }
@@ -52,7 +65,8 @@ public class AircraftManager : MonoBehaviour
 
     private void Update()
     {
-        // Update Collisions
+        //TODO: Handle Collisions
+
     }
 
 
@@ -65,6 +79,9 @@ public class AircraftManager : MonoBehaviour
 
         switch(gameAction)
         {
+            case GameAction.A_Down:
+                aircraftBombHatch.DropBomb();
+                break;
             case GameAction.LS_X_Axis:
                aircraftPhysics.RollData(value);
                 break;
@@ -89,6 +106,7 @@ public class AircraftManager : MonoBehaviour
     {
         if(objectType != this.objectType)
             return;
+
         controllerID = ID;
     }
 }

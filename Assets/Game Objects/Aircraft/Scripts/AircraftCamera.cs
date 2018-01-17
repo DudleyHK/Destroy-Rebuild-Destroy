@@ -56,6 +56,8 @@ public class AircraftCamera : MonoBehaviour
         Quaternion newRotation;
         if(aircraftPhysics.AfterBurnerActive)
         {
+            // TODO: Make shake amount adjust based on the Aircrafts velocity.
+
             newRotation = Quaternion.LookRotation(positionDifference + new Vector3(
                 Random.Range(-afterburnShakeAmount, afterburnShakeAmount),
                 Random.Range(-afterburnShakeAmount, afterburnShakeAmount),

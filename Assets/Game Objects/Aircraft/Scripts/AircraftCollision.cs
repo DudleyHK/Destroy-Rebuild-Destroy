@@ -10,5 +10,5 @@ using UnityEngine;
 /// </summary>
 public class AircraftCollision : MonoBehaviour
 {
-
+    //TODO: If collide with runway, topup. 
 }
