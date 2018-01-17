@@ -34,11 +34,9 @@ public class Bomb : MonoBehaviour
 
 
 
-
-
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("Bomb Hit: " + other.gameObject.tag);
+        // Debug.Log("Bomb Hit: " + other.gameObject.tag);
         var otherObject = other.gameObject;
         if(otherObject.tag == "Building")
         {

@@ -79,13 +79,7 @@ public class InputManager : MonoBehaviour
             Debug.Log("ERROR: The MAX number of controllers connected has been exceeded");
         }
 
-///#if UNITY_EDITOR
-///        // Keyboard input more players
-///        if(Input.GetKeyDown(KeyCode.A));// && Input.GetKeyDown(KeyCode.RightShift))
-///        {
-///            controllerNames.SetValue("Debug Xbox 360 Ghost Controller", 2);
-///        }
-///#endif
+
 
         for(var i = 0; i < controllerNames.Length; i++)
         {
@@ -96,7 +90,16 @@ public class InputManager : MonoBehaviour
             AllAxis();
             AllButtons();
         }
-    }   
+//#if UNITY_EDITOR
+//        DEBUG SWITCH PLAYER ONE
+//        if(Input.GetKeyDown(KeyCode.Keypad6))
+//        {
+
+//        }
+//#endif
+
+
+    }
 
 
 

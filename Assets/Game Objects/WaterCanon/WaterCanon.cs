@@ -8,7 +8,17 @@ using UnityEngine;
 public class WaterCanon : MonoBehaviour 
 {
     [SerializeField]
-    private float gushSpeed = 100f;
+    private float fastGush = 100f;
+    [SerializeField]
+    private float slowGush = 50f;
+    [SerializeField]
+    private float spinSpeed = 50f;
+    [SerializeField]
+    private float liftSpeed = 40f;
+    [SerializeField]
+    private float minLift = 25f;
+    [SerializeField]
+    private float maxLift = 125f;
     [SerializeField]
     private GameObject rotationBox;
     [SerializeField]
@@ -98,26 +108,31 @@ public class WaterCanon : MonoBehaviour
 
     private void Spin(float value)
     {
-        rotationBox.transform.Rotate(0f, value * 5f * Time.deltaTime, 0f, Space.Self);
+        rotationBox.transform.Rotate(0f, value * spinSpeed * Time.deltaTime, 0f, Space.Self);
     }
 
 
 
     private void Lift(float value)
     {
-        hose.transform.Rotate(value * 5f * Time.deltaTime, 0f, 0f, Space.Self);
+        // TODO: Limit the rotation of hose...
+        // https://gamedev.stackexchange.com/questions/109974/unity-problem-in-limiting-rotation-of-object/109980
+        hose.transform.Rotate(value * liftSpeed * Time.deltaTime, 0f, 0f, Space.Self);
     }
 
 
     private void SprayWater(float value)
     {
-        var spawnPoint = hose.transform.position + (transform.forward * 10f);
+        var spawnPoint = hose.transform.position + (hose.transform.up * 10f);
 
         var clone = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
         var clone2 = Instantiate(waterPrefab, spawnPoint, Quaternion.identity);
 
-        clone.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed;
-        clone2.GetComponent<Rigidbody>().velocity += transform.forward * gushSpeed / 2f;
+        clone.GetComponent<Rigidbody>().velocity += hose.transform.up * fastGush;
+        clone2.GetComponent<Rigidbody>().velocity += hose.transform.up * slowGush;
+
+
+        Debug.DrawRay(hose.transform.position, hose.transform.up * 10f, Color.green, 5f);
     }
 
 }
