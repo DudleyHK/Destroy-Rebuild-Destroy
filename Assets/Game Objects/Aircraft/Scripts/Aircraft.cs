@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Aircraft : MonoBehaviour 
 {
     [SerializeField]
@@ -40,6 +42,8 @@ public class Aircraft : MonoBehaviour
 
 
 
+
+
     private void Awake()
     {
         rigidbody  = GetComponent<Rigidbody>();
@@ -68,11 +72,14 @@ public class Aircraft : MonoBehaviour
 
     private void Update()
     {
-        rigidbody.velocity += transform.forward * 20f * Time.deltaTime;
+        //rigidbody.velocity += transform.forward * 20f * Time.deltaTime;
     }
+
+
 
     private void HandleInput(GameAction gameAction, float value, ControllerID ID)
     {
+        Debug.Log("MESSAGE: " + gameAction.ToString());
         if(controllerID != ID) return;
 
         switch(gameAction)
@@ -128,11 +135,10 @@ public class Aircraft : MonoBehaviour
 
     private void Forward(float value)
     {
-       var forwardSpeed = -value * speed;
-       if(forwardSpeed < minSpeed)  forwardSpeed = minSpeed;
-       if(forwardSpeed > maxSpeed)  forwardSpeed = maxSpeed;
-       
-        rigidbody.velocity += transform.forward * forwardSpeed * Time.deltaTime;
+        Debug.DrawRay(transform.position, transform.forward * 100f, Color.green, 5f);
+
+        var velocity = transform.forward * (-value * speed) * Time.deltaTime;
+        rigidbody.AddRelativeForce(velocity);
     }
 
 
@@ -161,4 +167,11 @@ public class Aircraft : MonoBehaviour
             }
         }
     }
-}
+
+
+
+
+
+
+
+    }

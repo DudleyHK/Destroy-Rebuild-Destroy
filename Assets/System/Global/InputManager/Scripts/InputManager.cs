@@ -79,8 +79,6 @@ public class InputManager : MonoBehaviour
             Debug.Log("ERROR: The MAX number of controllers connected has been exceeded");
         }
 
-
-
         for(var i = 0; i < controllerNames.Length; i++)
         {
             controllerID = (ControllerID)(i + 1);
@@ -90,15 +88,6 @@ public class InputManager : MonoBehaviour
             AllAxis();
             AllButtons();
         }
-//#if UNITY_EDITOR
-//        DEBUG SWITCH PLAYER ONE
-//        if(Input.GetKeyDown(KeyCode.Keypad6))
-//        {
-
-//        }
-//#endif
-
-
     }
 
 
@@ -165,6 +154,10 @@ public class InputManager : MonoBehaviour
         {
             inputDetected(GameAction.RT_Axis, trigger, controllerID);
         }
+        else
+        {
+            inputDetected(GameAction.RT_Axis, trigger, controllerID);
+        }
     }
 
 
@@ -178,8 +171,7 @@ public class InputManager : MonoBehaviour
         BDown();
         BHeld();
 
-        LBHeld();
-        RBHeld();
+        Bumpers();
     }
 
     private void ADown()
@@ -216,6 +208,10 @@ public class InputManager : MonoBehaviour
         {
             inputDetected(GameAction.B_Held, 1, controllerID);
         }
+        else
+        {
+            inputDetected(GameAction.B_Held, 0, controllerID);
+        }
     }
 
     private void LBDown()
@@ -224,15 +220,6 @@ public class InputManager : MonoBehaviour
         if(action)
         {
             inputDetected(GameAction.LB_Down, -1, controllerID);
-        }
-    }
-
-    private void LBHeld()
-    {        
-        var action = Input.GetButton("Controller " + (int)controllerID + " - LeftBumper");
-        if(action)
-        {
-            inputDetected(GameAction.LB_Held, -1, controllerID);
         }
     }
 
@@ -245,14 +232,28 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void RBHeld()
-    {
-        var action = Input.GetButton("Controller " + (int)controllerID + " - RightBumper");
-        if(action)
+    private void Bumpers()
+    {        
+        var leftBumper  = Input.GetButton("Controller " + (int)controllerID + " - LeftBumper");
+        var rightBumper = Input.GetButton("Controller " + (int)controllerID + " - RightBumper");
+
+        if(leftBumper)
+        {
+            inputDetected(GameAction.LB_Held, -1, controllerID);
+        }
+
+        if(rightBumper)
         {
             inputDetected(GameAction.RB_Held, 1, controllerID);
         }
+
+        if(!leftBumper && !rightBumper)
+        {
+            inputDetected(GameAction.LB_Held, 0, controllerID);
+            inputDetected(GameAction.RB_Held, 0, controllerID);
+        }
     }
+
 
 
     public ControllerID GetControllerID(int ID)

@@ -163,13 +163,13 @@ public class PlayerManager : MonoBehaviour
             players[players.Count - 1].PlayerType = ObjectType.Unassigned;
         }
         
+
+
         if(players[players.Count - 1].PlayerType == ObjectType.Unassigned)
         {
             Debug.Log("ERROR: Player has not correctly been assigned a objectType/ role");
             return;
         }
-
-
         playerCreated(players[players.Count - 1].ControllerID, players[players.Count - 1].PlayerType);
     }
 
