@@ -14,6 +14,10 @@ public class AircraftManager : MonoBehaviour
     [SerializeField]
     private AircraftBombHatch aircraftBombHatch;
     [SerializeField]
+    private AircraftFuelTank aircraftFuelTank;
+    [SerializeField]
+    private Camera aircraftCamera;
+    [SerializeField]
     private ControllerID controllerID = ControllerID.Unassigned;
     [SerializeField]
     private ObjectType objectType = ObjectType.Unassigned;
@@ -38,6 +42,20 @@ public class AircraftManager : MonoBehaviour
             Debug.Log("ERROR: AircraftBombHatch script is not found");
             return;
         }
+
+        aircraftFuelTank = GetComponent<AircraftFuelTank>();
+        if(!aircraftFuelTank)
+        {
+            Debug.Log("ERROR: AircraftFuelTank script is not found");
+            return;
+        }
+
+        aircraftCamera = FindObjectOfType<AircraftCamera>().GetComponent<Camera>();
+        if(!aircraftCamera)
+        {
+            Debug.Log("ERROR: AircraftCamera script is not found");
+            return;
+        }
     }
       
     private void Start()
@@ -51,7 +69,7 @@ public class AircraftManager : MonoBehaviour
     {
         InputManager.inputDetected  += HandleInput;
         PlayerManager.playerCreated += InsertPlayer;
-        Runway.aircraftResupplied   += ResupplyBombStock;
+        Runway.aircraftResupplied   += Resupply;
     }
 
 
@@ -59,14 +77,21 @@ public class AircraftManager : MonoBehaviour
     {
         InputManager.inputDetected  -= HandleInput;
         PlayerManager.playerCreated -= InsertPlayer;
-        Runway.aircraftResupplied   -= ResupplyBombStock;
+        Runway.aircraftResupplied   -= Resupply;
     }
 
 
     private void Update()
     {
-        //TODO: Handle Collisions
-
+        aircraftFuelTank.UpdateMultiplier(aircraftPhysics.CurrentMagnitude);
+        if(aircraftFuelTank.FuelTankEmpty)
+        {
+            Debug.Log("MESSAGE: Shutting off engines.");
+        }
+        else
+        {
+            // TODO: Set engines back online. 
+        }
     }
 
 
@@ -81,6 +106,16 @@ public class AircraftManager : MonoBehaviour
         {
             case GameAction.A_Down:
                 aircraftBombHatch.DropBomb();
+                break;
+            case GameAction.B_Down:
+                if(aircraftBombHatch.ToggleHatchCam(value))
+                {
+                    aircraftCamera.enabled = false;
+                }
+                else
+                {
+                    aircraftCamera.enabled = true;
+                }
                 break;
             case GameAction.LS_X_Axis:
                aircraftPhysics.RollData(value);
@@ -111,8 +146,9 @@ public class AircraftManager : MonoBehaviour
     }
 
 
-    private void ResupplyBombStock()
+    private void Resupply()
     {
         aircraftBombHatch.Resupply();
+        aircraftFuelTank.Resupply();
     }
 }

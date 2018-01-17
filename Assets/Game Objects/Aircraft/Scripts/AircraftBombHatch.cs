@@ -17,14 +17,30 @@ public class AircraftBombHatch : MonoBehaviour
     [SerializeField]
     private int bombStock = 0;
 
+    [SerializeField]
+    private Camera hatchCam;
+    [SerializeField]
+    private bool active = false;
+    [SerializeField]
+    private float cameraX = 0f;
+    [SerializeField]
+    private float cameraZ = 7.5f;
+    [SerializeField]
+    private float hatchCamShakeAmount = 2.5f;
+    [SerializeField]
+    private float hatchCamRotationTightness = 5f;
 
-
-    // TODO: Add switch to bomb hatch cam.
 
 
     private void Start()
     {
         bombStock = defaultStock;
+        hatchCam = GetComponentInChildren<Camera>();
+        if(!hatchCam)
+        {
+            Debug.Log("ERROR: HatchCam component not found in child object.");
+        }
+        active = false;
     }
 
 
@@ -42,6 +58,17 @@ public class AircraftBombHatch : MonoBehaviour
                 timer = 0f;
             }
         }
+
+        hatchCam.enabled = active;
+
+        var direction = hatchCam.transform.forward;
+        var newRotation = Quaternion.LookRotation(direction + new Vector3(
+            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount), 
+            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount),
+            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount)),
+            hatchCam.transform.up);
+
+        hatchCam.transform.rotation = Quaternion.Slerp(hatchCam.transform.rotation, newRotation, Time.deltaTime * hatchCamRotationTightness);
     }
 
 
@@ -49,10 +76,21 @@ public class AircraftBombHatch : MonoBehaviour
     {
         if(!hatchLocked && bombStock > 0)
         {
-            var bomb = Instantiate(bombPrefab, transform.position, Quaternion.identity);
+            var bomb = Instantiate(bombPrefab, transform.position + (transform.forward * 25f), Quaternion.identity);
             hatchLocked = true;
             bombStock--;
         }
+    }
+
+    /// <summary>
+    /// Toggle the hatch camera on/ off.
+    /// </summary>
+    /// <returns></returns>
+    public bool ToggleHatchCam(float value)
+    {
+        if(value > 0)
+            active = !active;
+        return active;
     }
 
 

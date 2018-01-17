@@ -47,11 +47,11 @@ public class AircraftPhysics : MonoBehaviour
     private float yawValue    = 0f;
     private float rollValue   = 0f;
 
-    // TODO: MAke this public so other scripts can access it to use as a multiplier. 
-    private float currentMagnitude = 0f;
+    // TODO: Make this public so other scripts can access it to use as a multiplier. 
     
 
     public bool  AfterBurnerActive { get; private set; }
+    public float CurrentMagnitude  { get; private set; }
     public float Yaw { get; private set; }
 
 
@@ -73,6 +73,7 @@ public class AircraftPhysics : MonoBehaviour
         }
 
         AfterBurnerActive = false;
+        CurrentMagnitude = 0f;
     }
 
 
@@ -93,26 +94,26 @@ public class AircraftPhysics : MonoBehaviour
         var pitch = pitchValue * pitchYawModifier;
         
         Yaw = yawValue * pitchYawModifier;
-        currentMagnitude = rigidbody.velocity.magnitude;
+        CurrentMagnitude = rigidbody.velocity.magnitude;
 
 
         if(thrustValue > 0)
         {
             //If input on the thrust axis is positive, activate afterburners.
             AfterBurnerActive = true;
-            currentMagnitude = Mathf.Lerp(currentMagnitude, afterburnerSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, afterburnerSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
         else if(thrustValue < 0)
         {   
             //If input on the thrust axis is negatve, activate brakes.
             AfterBurnerActive = false;
-            currentMagnitude = Mathf.Lerp(currentMagnitude, slowSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, slowSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
         else
         {
             //Otherwise, hold normal speed.
             AfterBurnerActive = false;
-            currentMagnitude = Mathf.Lerp(currentMagnitude, speed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, speed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
 
         rigidbody.AddRelativeTorque(
@@ -121,11 +122,11 @@ public class AircraftPhysics : MonoBehaviour
             (roll  * turnSpeed * (rollSpeedModifier / 2f) * Time.fixedDeltaTime));
 
 
-        currentMagnitude -= transform.forward.y * gravitationalModifier;
+        CurrentMagnitude -= transform.forward.y * gravitationalModifier;
+        rigidbody.AddRelativeForce(Vector3.down * gravityScale * (rigidbody.mass / Physics.gravity.magnitude));// * (, ForceMode.Force);
 
-        rigidbody.AddForce(Vector3.down * gravityScale * (rigidbody.mass / Physics.gravity.magnitude));// * (, ForceMode.Force);
+        rigidbody.velocity = transform.forward * CurrentMagnitude;
 
-        rigidbody.velocity = transform.forward * currentMagnitude;
         
         UpdateBanking();
     }

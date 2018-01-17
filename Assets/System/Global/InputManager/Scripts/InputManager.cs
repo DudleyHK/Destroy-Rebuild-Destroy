@@ -199,6 +199,10 @@ public class InputManager : MonoBehaviour
         {
             inputDetected(GameAction.B_Down, 1, controllerID);
         }
+        else
+        {
+            inputDetected(GameAction.B_Down, 0, controllerID);
+        }
     }
 
     private void BHeld()

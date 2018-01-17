@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public class Aircraft : MonoBehaviour 
+public class Aircraft : MonoBehaviour
 {
     [SerializeField]
     private float minSpeed = 40f;
@@ -46,7 +46,7 @@ public class Aircraft : MonoBehaviour
 
     private void Awake()
     {
-        rigidbody  = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
         bombCamera = GetComponentInChildren<BombCamera>();
     }
 
@@ -80,7 +80,8 @@ public class Aircraft : MonoBehaviour
     private void HandleInput(GameAction gameAction, float value, ControllerID ID)
     {
         Debug.Log("MESSAGE: " + gameAction.ToString());
-        if(controllerID != ID) return;
+        if(controllerID != ID)
+            return;
 
         switch(gameAction)
         {
@@ -154,7 +155,7 @@ public class Aircraft : MonoBehaviour
 
 
     private void BombCamera(float value)
-    {        
+    {
         if(value > 0)
         {
             if(bombCamera.Toggle())
@@ -167,11 +168,4 @@ public class Aircraft : MonoBehaviour
             }
         }
     }
-
-
-
-
-
-
-
-    }
+}
