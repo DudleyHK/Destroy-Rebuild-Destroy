@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Runway : MonoBehaviour 
 {
+    public delegate void AircraftResupplied();
+    public static event AircraftResupplied aircraftResupplied;
+
+
     [SerializeField]
     private Renderer[] signalLightRenderers;
     [SerializeField]
     private bool recharging = false;
+    [SerializeField]
+    private bool resupplyConfirmed = false;
     [SerializeField]
     private float MAX_TIME = 5f;
     [SerializeField]
@@ -35,15 +41,24 @@ public class Runway : MonoBehaviour
 
     private void Update()
     {
-        if(recharging)
+        if(recharging && !resupplyConfirmed)
         {
-            if(timer < MAX_TIME)
+            if(timer <= MAX_TIME)
             {
                 timer += Time.deltaTime;
             }
             else
             {
                 StartCoroutine(ColourSwitch());
+                if(aircraftResupplied != null)
+                {
+                    aircraftResupplied();
+                }
+                else
+                {
+                    Debug.Log("ERROR: Nothing has been attached to the aircraftResupplied delegate");
+                }
+                resupplyConfirmed = true;
             }
         }
         else
@@ -52,12 +67,13 @@ public class Runway : MonoBehaviour
         }
     }
 
-    // TODO: When plane is in the collision box. turn houses green. This can be changed to a more complex system later.
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("MESSAGE: Resupplying tag - " + other.tag);
         var otherObject = other.gameObject;
         if(otherObject.tag == "Aircraft")
         {
+            
             recharging = true;
         }
     }
@@ -74,7 +90,10 @@ public class Runway : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Change the colours of the lights to green. When the lets turn off the plane can come back for a resupply.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator ColourSwitch()
     {
         float MAX_TIME = 10f;
@@ -91,6 +110,7 @@ public class Runway : MonoBehaviour
         for(int i = 0; i < signalLightRenderers.Length; i++)
         {
             signalLightRenderers[i].material.color = Color.red;
+            resupplyConfirmed = false;
         }
         yield return true;
     }

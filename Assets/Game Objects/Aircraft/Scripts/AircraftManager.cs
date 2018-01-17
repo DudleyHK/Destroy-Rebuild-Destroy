@@ -19,10 +19,8 @@ public class AircraftManager : MonoBehaviour
     private ObjectType objectType = ObjectType.Unassigned;
 
 
-    // TODO: Add fuel to the aircraft
-    // TODO: Add total bomb being carried. 
-    // TODO: Count down number of bombs. 
-
+    // TODO: Add fuel to the aircraft.
+    // TODO: Count down Fuel.. Depending on the current velocity  lower it faster.
 
 
     private void Awake()
@@ -51,15 +49,17 @@ public class AircraftManager : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.inputDetected += HandleInput;
+        InputManager.inputDetected  += HandleInput;
         PlayerManager.playerCreated += InsertPlayer;
+        Runway.aircraftResupplied   += ResupplyBombStock;
     }
 
 
     private void OnDisable()
     {
-        InputManager.inputDetected -= HandleInput;
+        InputManager.inputDetected  -= HandleInput;
         PlayerManager.playerCreated -= InsertPlayer;
+        Runway.aircraftResupplied   -= ResupplyBombStock;
     }
 
 
@@ -108,5 +108,11 @@ public class AircraftManager : MonoBehaviour
             return;
 
         controllerID = ID;
+    }
+
+
+    private void ResupplyBombStock()
+    {
+        aircraftBombHatch.Resupply();
     }
 }

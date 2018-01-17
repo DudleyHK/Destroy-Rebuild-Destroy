@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+// TODO: Put a black boarder around the split screen camera. 
 
 public class AircraftCamera : MonoBehaviour 
 {

@@ -47,6 +47,7 @@ public class AircraftPhysics : MonoBehaviour
     private float yawValue    = 0f;
     private float rollValue   = 0f;
 
+    // TODO: MAke this public so other scripts can access it to use as a multiplier. 
     private float currentMagnitude = 0f;
     
 
@@ -126,7 +127,7 @@ public class AircraftPhysics : MonoBehaviour
 
         rigidbody.velocity = transform.forward * currentMagnitude;
         
-        //UpdateBanking();
+        UpdateBanking();
     }
 
 
