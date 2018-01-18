@@ -12,23 +12,35 @@ public class AircraftPhysics : MonoBehaviour
 {
     //"Core Movement", "Controls for the various speeds for different operations."
     [SerializeField]
-    private float speed                 = 20f; //"Base Speed", "Primary flight speed, without afterburners or brakes"
+    private float defaultSpeed                 = 100f; 
     [SerializeField]
-    private float afterburnerSpeed      = 40f; //Afterburner Speed", "Speed when the button for positive thrust is being held down"
+    private float defaultAfterburnerSpeed      = 350f; 
     [SerializeField]
-    private float slowSpeed             = 4f;  //"Brake Speed", "Speed when the button for negative thrust is being held down"
+    private float defualtSlowSpeed             = 50f;
+    [SerializeField]
+    private float defaultGravityScale          = 15f;
+    [SerializeField]
+    private float defaultTurnSpeed             = 50f; 
+    [SerializeField]
+    private float currentSpeed                 = 100f; //"Base Speed", "Primary flight speed, without afterburners or brakes"
+    [SerializeField]
+    private float currentAfterburnerSpeed      = 350f; //Afterburner Speed", "Speed when the button for positive thrust is being held down"
+    [SerializeField]
+    private float currentSlowSpeed             = 50f;  //"Brake Speed", "Speed when the button for negative thrust is being held down"
     [SerializeField]
     private float thrustTransitionSpeed = 5f;  //Thrust Transition Speed", "How quickly afterburners/brakes will reach their maximum effect"
     [SerializeField]
-    private float turnSpeed             = 15f; //"Turn/Roll Speed", "How fast turns and rolls will be executed "
+    private float currentTurnSpeed             = 50f; //"Turn/Roll Speed", "How fast turns and rolls will be executed "
     [SerializeField]
-    private float rollSpeedModifier     = 7f;  //"Roll Speed", "Multiplier for roll speed. Base roll is determined by turn speed"
+    private float rollSpeedModifier     = 3f;  //"Roll Speed", "Multiplier for roll speed. Base roll is determined by turn speed"
     [SerializeField]
-    private float pitchYawModifier      = 15f; //"Pitch/Yaw Multiplier", "Controls the intensity of pitch and yaw inputs"
+    private float pitchYawModifier      = 2f; //"Pitch/Yaw Multiplier", "Controls the intensity of pitch and yaw inputs"
     [SerializeField]
-    private float gravitationalModifier = 10f;  //"Gravitational Multiplier", "Controls the speed of the aircraft when lifting and dipping its nose"
+    private float gravitationalModifier = 15f;  //"Gravitational Multiplier", "Controls the speed of the aircraft when lifting and dipping its nose"
     [SerializeField]
-    private float gravityScale          = 15f;  //"Gravity", "A downwards force effecting the aircraft"
+    private float currentGravityScale          = 15f;  //"Gravity", "A downwards force effecting the aircraft"
+    [SerializeField]
+    private bool enginesOffline         = false;
 
     //"Banking", "Visuals only--has no effect on actual movement"
     [SerializeField]
@@ -73,7 +85,9 @@ public class AircraftPhysics : MonoBehaviour
         }
 
         AfterBurnerActive = false;
-        CurrentMagnitude = 0f;
+        CurrentMagnitude  = 0f;
+
+        EngineOnline();
     }
 
 
@@ -83,6 +97,31 @@ public class AircraftPhysics : MonoBehaviour
     }
 
 
+    public void EngineShutdown()
+    {
+        enginesOffline = true;
+
+        currentSpeed            =  10f;
+        currentSlowSpeed        =  0f;
+        currentAfterburnerSpeed =  0f;
+        currentGravityScale     =  30f;
+        currentTurnSpeed        =  25f;
+
+    }
+
+    /// <summary>
+    /// Set all speed variables to defualt values. 
+    /// </summary>
+    public void EngineOnline()
+    {
+        enginesOffline = false;
+
+        currentSpeed            = defaultSpeed;
+        currentSlowSpeed        = defualtSlowSpeed;
+        currentAfterburnerSpeed = defaultAfterburnerSpeed;
+        currentGravityScale     = defaultGravityScale;
+        currentTurnSpeed               = defaultTurnSpeed;
+    }
 
 
     /// <summary>
@@ -101,29 +140,29 @@ public class AircraftPhysics : MonoBehaviour
         {
             //If input on the thrust axis is positive, activate afterburners.
             AfterBurnerActive = true;
-            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, afterburnerSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, currentAfterburnerSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
         else if(thrustValue < 0)
         {   
             //If input on the thrust axis is negatve, activate brakes.
             AfterBurnerActive = false;
-            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, slowSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, currentSlowSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
         else
         {
             //Otherwise, hold normal speed.
             AfterBurnerActive = false;
-            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, speed, thrustTransitionSpeed * Time.fixedDeltaTime);
+            CurrentMagnitude = Mathf.Lerp(CurrentMagnitude, currentSpeed, thrustTransitionSpeed * Time.fixedDeltaTime);
         }
 
         rigidbody.AddRelativeTorque(
-            (pitch * turnSpeed * Time.fixedDeltaTime),
-            (Yaw   * turnSpeed * Time.fixedDeltaTime),
-            (roll  * turnSpeed * (rollSpeedModifier / 2f) * Time.fixedDeltaTime));
+            (pitch * currentTurnSpeed * Time.fixedDeltaTime),
+            (Yaw   * currentTurnSpeed * Time.fixedDeltaTime),
+            (roll  * currentTurnSpeed * (rollSpeedModifier / 2f) * Time.fixedDeltaTime));
 
 
         CurrentMagnitude -= transform.forward.y * gravitationalModifier;
-        rigidbody.AddRelativeForce(Vector3.down * gravityScale * (rigidbody.mass / Physics.gravity.magnitude));// * (, ForceMode.Force);
+        rigidbody.AddRelativeTorque(Vector3.right * currentGravityScale * Time.fixedDeltaTime);
 
         rigidbody.velocity = transform.forward * CurrentMagnitude;
 
@@ -139,7 +178,7 @@ public class AircraftPhysics : MonoBehaviour
         Vector3 newEulerAngles = newRotation.eulerAngles;
 
         //Basically, we're just making it bank a little in the direction that it's turning.
-        newEulerAngles.z += Mathf.Clamp((-Yaw * turnSpeed * Time.fixedDeltaTime) * bankRotationMultiplier, -bankAngleClamp, bankAngleClamp);
+        newEulerAngles.z += Mathf.Clamp((-Yaw * currentTurnSpeed * Time.fixedDeltaTime) * bankRotationMultiplier, -bankAngleClamp, bankAngleClamp);
         newRotation.eulerAngles = newEulerAngles;
 
         //Apply the rotation to the gameobject that contains the model.
@@ -149,6 +188,8 @@ public class AircraftPhysics : MonoBehaviour
 
     public void ThrustData(float value)
     {
+        if(enginesOffline) value = 0f;
+
         thrustValue = value;
     }
 

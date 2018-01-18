@@ -43,6 +43,14 @@ public class AircraftFuelTank : MonoBehaviour
     }
 
 
+    public bool Alert()
+    {
+        if(fuelSupply <= (defaultFuelSupply * 0.25f))
+            return true;
+        return false;
+    }
+
+
     public void Resupply()
     {
         fuelSupply = defaultFuelSupply;

@@ -28,6 +28,8 @@ public class AircraftBombHatch : MonoBehaviour
     [SerializeField]
     private float hatchCamShakeAmount = 2.5f;
     [SerializeField]
+    private float speedMultiplier = 0f;
+    [SerializeField]
     private float hatchCamRotationTightness = 5f;
 
 
@@ -60,17 +62,22 @@ public class AircraftBombHatch : MonoBehaviour
         }
 
         hatchCam.enabled = active;
+        var hatchCamShake = hatchCamShakeAmount * (speedMultiplier * 0.1f * Time.deltaTime);
 
         var direction = hatchCam.transform.forward;
         var newRotation = Quaternion.LookRotation(direction + new Vector3(
-            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount), 
-            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount),
-            Random.Range(-hatchCamShakeAmount, hatchCamShakeAmount)),
+            Random.Range(-hatchCamShake, hatchCamShake), 
+            Random.Range(-hatchCamShake, hatchCamShake),
+            Random.Range(-hatchCamShake, hatchCamShake)),
             hatchCam.transform.up);
 
         hatchCam.transform.rotation = Quaternion.Slerp(hatchCam.transform.rotation, newRotation, Time.deltaTime * hatchCamRotationTightness);
     }
 
+    public void UpdateMultiplier(float speedMultiplier)
+    {
+        this.speedMultiplier = speedMultiplier;
+    }
 
     public void DropBomb()
     {
@@ -80,6 +87,13 @@ public class AircraftBombHatch : MonoBehaviour
             hatchLocked = true;
             bombStock--;
         }
+    }
+
+    public bool Alert()
+    {
+        if(bombStock <= 3)
+            return true;
+        return false;
     }
 
     /// <summary>

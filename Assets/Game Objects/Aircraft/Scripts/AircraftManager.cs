@@ -16,6 +16,8 @@ public class AircraftManager : MonoBehaviour
     [SerializeField]
     private AircraftFuelTank aircraftFuelTank;
     [SerializeField]
+    private AircraftHUD aircraftHUD;
+    [SerializeField]
     private Camera aircraftCamera;
     [SerializeField]
     private ControllerID controllerID = ControllerID.Unassigned;
@@ -50,6 +52,13 @@ public class AircraftManager : MonoBehaviour
             return;
         }
 
+        aircraftHUD = GetComponent<AircraftHUD>();
+        if(!aircraftHUD)
+        {
+            Debug.Log("ERROR: AircraftHUD script is not found");
+            return;
+        }
+
         aircraftCamera = FindObjectOfType<AircraftCamera>().GetComponent<Camera>();
         if(!aircraftCamera)
         {
@@ -58,6 +67,7 @@ public class AircraftManager : MonoBehaviour
         }
     }
       
+
     private void Start()
     {
         // TODO: Parse the tag into the Enum type and set the objectType as that.
@@ -84,13 +94,38 @@ public class AircraftManager : MonoBehaviour
     private void Update()
     {
         aircraftFuelTank.UpdateMultiplier(aircraftPhysics.CurrentMagnitude);
-        if(aircraftFuelTank.FuelTankEmpty)
+        aircraftBombHatch.UpdateMultiplier(aircraftPhysics.CurrentMagnitude);
+
+
+        if(aircraftBombHatch.Alert())
         {
-            Debug.Log("MESSAGE: Shutting off engines.");
+            Debug.Log("Bomb stock low");
+            aircraftHUD.BombStockOn();
         }
         else
         {
-            // TODO: Set engines back online. 
+            aircraftHUD.BombStockOff();
+        }
+
+        if(aircraftFuelTank.Alert())
+        {
+            Debug.Log("Fuel stock low");
+            aircraftHUD.FuelIndicatorOn();
+        }
+        else
+        {
+            aircraftHUD.FuelIndicatorOff();
+        }
+
+
+        if(aircraftFuelTank.FuelTankEmpty)
+        {
+            aircraftPhysics.EngineShutdown();
+        }
+        else
+        {
+            
+            aircraftPhysics.EngineOnline();
         }
     }
 

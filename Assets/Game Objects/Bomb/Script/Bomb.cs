@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour 
 {
-    private float acceleration = 75f;
+    private float acceleration = 100f;
     private new Rigidbody rigidbody;
 
 
@@ -21,7 +21,7 @@ public class Bomb : MonoBehaviour
 
     private void Update()
     {
-        if(transform.position.y < 5f)
+        if(transform.position.y < 10f)
             Destroy(this.gameObject);
 
        
